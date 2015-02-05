@@ -14,15 +14,27 @@ if(NOT ${CMAKE_VERSION} VERSION_LESS 2.8.11)
   cmake_policy(SET CMP0020 NEW)
 endif()
 
-project(YARP)
-
 # Pick up our CMake scripts - they are all in the conf subdirectory.
-set(YARP_MODULE_DIR ${PROJECT_SOURCE_DIR}/conf)
+set(YARP_MODULE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/conf)
 set(YARP_MODULE_PATH ${YARP_MODULE_DIR})
 if(${CMAKE_VERSION} VERSION_LESS 3.1)
-  list(APPEND YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf/cmake-3.1/Modules)
+  list(APPEND YARP_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/conf/cmake-3.1/Modules)
 endif()
 set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+
+# Add iOS SDK if Xcode is specified and iOS variable is ON.
+# This must be done before program()command
+if (CMAKE_GENERATOR STREQUAL "Xcode")
+    option(YARP_IOS_TARGET "Compile minimal version of YARP to support iOS platform. Only Xcode (-GXcode) generator is supported" FALSE)
+    if (YARP_IOS_TARGET)
+        message("Setup project to compile for iOS target")
+        include(YarpIOSOptions)
+        yarp_ios_set_options()
+        # yarp_iOS_set_SDKRoot()
+    endif()
+endif()
+
+project(YARP)
 
 # The YARP build is fairly flexible, so we need to accumulate some
 # information about what libraries are being built (and their dependencies),
@@ -53,6 +65,12 @@ include(YarpCMakeWorkarounds)
 # Check YARP dependencies, find necessary libraries.
 # See conf/YarpFindDependencies.cmake.
 include(YarpFindDependencies)
+
+# Add iOS specific options
+if (YARP_IOS_TARGET)
+    message("Setup project to compile for iOS target")
+    # yarp_ios_set_options()
+endif()
 
 # Make some custom header files containing compile settings.
 add_subdirectory(conf)

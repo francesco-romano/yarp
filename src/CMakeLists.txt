@@ -24,40 +24,45 @@ link_directories(${YARP_TREE_LINK_DIRS})
 
 add_subdirectory(carriers)
 
-add_subdirectory(idls)
+if (NOT YARP_IOS_TARGET)
+    add_subdirectory(idls)
+endif()
 
 add_subdirectory(libYARP_name)
 add_subdirectory(libYARP_init)
 add_subdirectory(libYARP_manager)
 add_subdirectory(libYARP_logger)
 
-add_subdirectory(libyarpc)
-add_subdirectory(libyarpcxx)
+if (NOT YARP_IOS_TARGET)
+    add_subdirectory(libyarpc)
+    add_subdirectory(libyarpcxx)
 
-# executables
-add_subdirectory(yarpserver)
-add_subdirectory(yarp)
-add_subdirectory(yarprun)
-add_subdirectory(yarphear)
-add_subdirectory(yarpdev)
-add_subdirectory(yarpmanager-console)
-add_subdirectory(yarplogger-console)
-add_subdirectory(yarpdatadumper)
+    # executables
+    add_subdirectory(yarpserver)
+    add_subdirectory(yarp)
+    add_subdirectory(yarprun)
+    add_subdirectory(yarphear)
+    add_subdirectory(yarpdev)
+    add_subdirectory(yarpmanager-console)
+    add_subdirectory(yarplogger-console)
+    add_subdirectory(yarpdatadumper)
 
-# Qt5 GUIs
-add_subdirectory(yarpview-qt)
-add_subdirectory(yarpscope-qt)
-add_subdirectory(yarpmanager-qt)
-add_subdirectory(yarplogger-qt)
-add_subdirectory(yarpdataplayer-qt)
+    # Qt5 GUIs
+    add_subdirectory(yarpview-qt)
+    add_subdirectory(yarpscope-qt)
+    add_subdirectory(yarpmanager-qt)
+    add_subdirectory(yarplogger-qt)
+    add_subdirectory(yarpdataplayer-qt)
 
-# GTK2 GUIs
-add_subdirectory(yarpview-gtk)
-add_subdirectory(yarpscope-gtk)
-add_subdirectory(yarpmanager-gtk)
-add_subdirectory(yarpbuilder-gtk)
-add_subdirectory(yarpdataplayer-gtk)
+    # GTK2 GUIs
+    add_subdirectory(yarpview-gtk)
+    add_subdirectory(yarpscope-gtk)
+    add_subdirectory(yarpmanager-gtk)
+    add_subdirectory(yarpbuilder-gtk)
+    add_subdirectory(yarpdataplayer-gtk)
 
-# data
-add_subdirectory(yarpmanager)
-add_subdirectory(yarpdataplayer)
+    # data
+    add_subdirectory(yarpmanager)
+    add_subdirectory(yarpdataplayer)
+
+endif()

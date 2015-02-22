@@ -82,10 +82,17 @@ if(CREATE_LIB_MANAGER)
       find_package(LibMicroHTTPD REQUIRED)
       add_definitions(-DYARP_MANAGER_HTTPD)
       
-      set(YARP_manager_httpd_SRCS src/server/HTTPServer.cpp)
-      set(YARP_manager_httpd_HDRS include/yarp/manager/server/HTTPServer.h)
-      set(YARP_manager_httpd_PRIVATE_HDRS include/yarp/manager/server/HTTPServerDispatchElement.h)
-      set(YARP_manager_httpd_PRIVATE_SRCS src/server/HTTPServerDispatchElement.cpp)
+      set(YARP_manager_httpd_SRCS src/server/HTTPServer.cpp 
+                                  src/server/HTTPServerSerialization.cpp)
+                                  
+      set(YARP_manager_httpd_HDRS include/yarp/manager/server/HTTPServer.h 
+                                  include/yarp/manager/server/HTTPServerSerialization.h)
+                                  
+      set(YARP_manager_httpd_PRIVATE_HDRS include/yarp/manager/server/HTTPServerDispatchElement.h
+                                          include/yarp/manager/server/ManagerHTTPServer.h)
+                                          
+      set(YARP_manager_httpd_PRIVATE_SRCS src/server/HTTPServerDispatchElement.cpp
+                                          src/server/ManagerHTTPServer.cpp)
       
       include_directories(SYSTEM ${LIBMICROHTTPD_INCLUDE_DIRS})
       

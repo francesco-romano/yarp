@@ -2,34 +2,17 @@
 #define YARP_MANAGER_HTTPSERVERDISPATCHELEMENT_H
 
 #include <string>
+#include <yarp/manager/server/HTTPServer.h>
 
 namespace yarp {
     namespace manager {
         namespace server {
+
         struct HTTPServerDispatchElementKey;
         struct HTTPServerDispatchElementValue;
         }
     }
 }
-
-typedef enum {
-    HTTPMethodNotDefined = 0,
-    HTTPMethodGet = 1,
-    HTTPMethodHead = 1 << 1,
-    HTTPMethodPost = 1 << 2,
-    HTTPMethodPut = 1 << 3,
-    HTTPMethodDelete = 1 << 4,
-    HTTPMethodAny =
-    HTTPMethodGet
-    | HTTPMethodHead
-    | HTTPMethodPost
-    | HTTPMethodPut
-    | HTTPMethodDelete
-} HTTPMethod;
-
-extern std::string stringRepresentationForHTTPMethod(HTTPMethod method);
-extern HTTPMethod httpMethodFromString(std::string method);
-
 
 struct yarp::manager::server::HTTPServerDispatchElementKey
 {
@@ -45,8 +28,9 @@ struct yarp::manager::server::HTTPServerDispatchElementKey
 
 
 struct yarp::manager::server::HTTPServerDispatchElementValue {
-    int processRequest() const;
-    int (*requestHandler)();
+    HTTPResponse processRequest() const;
+    HTTPServer::RequestHandler requestHandler;
+    void * context;
 };
 
 

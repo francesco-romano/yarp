@@ -18,6 +18,9 @@
 #include <yarp/manager/xmlappsaver.h>
 #include <yarp/manager/singleapploader.h>
 
+#ifdef YARP_MANAGER_HTTPD
+#include <yarp/manager/server/HTTPServer.h>
+#endif
 
 #define RUN_TIMEOUT             10      // Run timeout in seconds
 #define STOP_TIMEOUT            30      // Stop timeout in seconds
@@ -50,6 +53,17 @@ Manager::Manager(bool withWatchDog) : MEvent()
 Manager::Manager(const char* szModPath, const char* szAppPath,
                  const char* szResPath, bool withWatchDog)
 {
+    designatedInitializer(szModPath, szAppPath, szResPath, withWatchDog, false);
+}
+
+Manager::Manager(const char* szModPath, const char* szAppPath,
+                 const char* szResPath, bool withWatchDog, bool withHTTPDaemon)
+{
+    designatedInitializer(szModPath, szAppPath, szResPath, withWatchDog, withHTTPDaemon);
+}
+
+void Manager::designatedInitializer(const char *szModPath, const char *szAppPath, const char *szResPath, bool withWatchDog, bool withHTTPDaemon)
+{
     logger  = ErrorLogger::Instance();
     bWithWatchDog = withWatchDog;
     bAutoDependancy = false;
@@ -73,6 +87,12 @@ Manager::Manager(const char* szModPath, const char* szAppPath,
 
     knowledge.createFrom(pModLoad, pAppLoad, pResLoad);
     connector.init();
+
+#ifdef YARP_MANAGER_HTTPD
+    if (withHTTPDaemon) {
+
+    }
+#endif
 }
 
 
@@ -81,6 +101,13 @@ Manager::~Manager()
     // untopic persistent connections
     rmconnect();
     clearExecutables();
+#ifdef YARP_MANAGER_HTTPD
+    //tear down server
+    if (httpServer) {
+        delete httpServer;
+        httpServer = NULL;
+    }
+#endif
 }
 
 bool Manager::addApplication(const char* szFileName, char** szAppName_, bool modifyName)

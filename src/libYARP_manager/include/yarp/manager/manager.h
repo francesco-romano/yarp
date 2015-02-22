@@ -20,7 +20,10 @@ using namespace std;
 
 namespace yarp {
 namespace manager {
-
+    
+#ifdef YARP_MANAGER_HTTPD
+    class HTTPServer;
+#endif
 
 /**
  * Class Manager
@@ -31,6 +34,9 @@ public:
     Manager( bool withWatchDog=false);
     Manager(const char* szModPath, const char* szAppPath,
             const char* szResPath, bool withWatchDog=false);
+    Manager(const char* szModPath, const char* szAppPath,
+            const char* szResPath, bool withWatchDog=false, bool withHTTPDaemon = false);
+
     virtual ~Manager();
 
     bool addApplication(const char* szFileName, char** szAppName_=NULL, bool modifyName=false);
@@ -134,6 +140,9 @@ private:
     ModulePContainer modules;
     ResourcePContainer resources;
 
+    void designatedInitializer(const char* szModPath, const char* szAppPath,
+                               const char* szResPath, bool withWatchDog, bool withHTTPDaemon);
+
     bool createKnowledgeBase(AppLoader &appLoader);
     void clearExecutables(void);
     bool isServer(Module* module);
@@ -146,6 +155,9 @@ private:
     bool timeout(double base, double t);
     bool updateResource(GenericResource* resource);
     Broker* createBroker(Module* module);
+#ifdef YARP_MANAGER_HTTPD
+    HTTPServer *httpServer;
+#endif
 };
 
 } // namespace yarp

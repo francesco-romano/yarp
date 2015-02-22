@@ -6,6 +6,8 @@
 #
 
 if(CREATE_LIB_MANAGER)
+    
+    option(YARP_MANAGER_HTTPD "Enable HTTP web server daemon for the manager" FALSE)
 
   get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
@@ -75,6 +77,28 @@ if(CREATE_LIB_MANAGER)
   source_group("Source Files" FILES ${YARP_manager_SRCS})
   source_group("Header Files" FILES ${YARP_manager_HDRS})
   source_group("Implementation Header Files" FILES ${YARP_manager_IMPL_HDRS})
+  
+  if (YARP_MANAGER_HTTPD)
+      find_package(LibMicroHTTPD REQUIRED)
+      add_definitions(-DYARP_MANAGER_HTTPD)
+      
+      set(YARP_manager_httpd_SRCS src/server/HTTPServer.cpp)
+      set(YARP_manager_httpd_HDRS include/yarp/manager/server/HTTPServer.h)
+      set(YARP_manager_httpd_PRIVATE_HDRS include/yarp/manager/server/HTTPServerDispatchElement.h)
+      set(YARP_manager_httpd_PRIVATE_SRCS src/server/HTTPServerDispatchElement.cpp)
+      
+      include_directories(SYSTEM ${LIBMICROHTTPD_INCLUDE_DIRS})
+      
+      source_group("HTTPD\\Source Files" FILES ${YARP_manager_httpd_SRCS})
+      source_group("HTTPD\\Header Files" FILES ${YARP_manager_httpd_HDRS})
+      source_group("HTTPD\\Private\\Header Files" FILES ${YARP_manager_httpd_PRIVATE_HDRS})
+      source_group("HTTPD\\Private\\Source Files" FILES ${YARP_manager_httpd_PRIVATE_SRCS})
+      
+      list(APPEND YARP_manager_SRCS ${YARP_manager_httpd_SRCS} ${YARP_manager_httpd_PRIVATE_SRCS})
+      list(APPEND YARP_manager_HDRS ${YARP_manager_httpd_HDRS})
+      list(APPEND YARP_manager_IMPL_HDRS ${YARP_manager_httpd_PRIVATE_HDRS})
+  endif()
+  
 
   set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
   get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -96,6 +120,10 @@ if(CREATE_LIB_MANAGER)
 
   target_link_libraries(YARP_manager LINK_PRIVATE YARP_sig YARP_OS)
   target_link_libraries(YARP_manager LINK_PRIVATE ${TinyXML_LIBRARIES})
+  
+  if (YARP_MANAGER_HTTPD)
+      target_link_libraries(YARP_manager LINK_PRIVATE ${LIBMICROHTTPD_LIBRARIES})
+  endif()
 
   if(CREATE_LIB_MATH)
     target_link_libraries(YARP_manager LINK_PRIVATE YARP_math)

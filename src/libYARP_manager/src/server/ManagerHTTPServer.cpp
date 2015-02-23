@@ -17,7 +17,7 @@ namespace yarp {
                 yarp::manager::Manager *manager;
             };
 
-            static HTTPResponse listApplications(void * context) {
+            static HTTPResponse listApplications(void * context, std::map<std::string, std::string> headerParameters) {
                 ManagerHTTPServerContext* managerData = static_cast<ManagerHTTPServerContext*>(context);
                 HTTPResponse response;
                 response.responseContentType = HTTPMIMETypeJSON;

@@ -2,6 +2,7 @@
 #define YARP_HTTPD_HTTPSERVER_H
 
 #include <string>
+#include <map>
 #include <yarp/manager/server/Constants.h>
 
 namespace yarp {
@@ -16,7 +17,7 @@ namespace yarp {
 
 class yarp::manager::server::HTTPServer {
 public:
-    typedef yarp::manager::server::HTTPResponse (*RequestHandler)(void * context);
+    typedef yarp::manager::server::HTTPResponse (*RequestHandler)(void * context, std::map<std::string, std::string> headerParameters);
 
 private:
     HTTPServer(const HTTPServer&);

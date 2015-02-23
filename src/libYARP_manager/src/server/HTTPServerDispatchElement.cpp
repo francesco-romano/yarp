@@ -27,7 +27,7 @@ namespace yarp {
             {
                 HTTPResponse response;
                 if (this->requestHandler) {
-                    response = requestHandler(this->context);
+                    response = requestHandler(this->context, headerParameters);
                     //prepare response object
                     return response;
                 }

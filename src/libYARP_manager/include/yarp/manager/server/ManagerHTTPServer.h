@@ -1,5 +1,5 @@
-#ifndef YARP_MANAGER_MANAGERHTTPSERVER_H
-#define YARP_MANAGER_MANAGERHTTPSERVER_H
+#ifndef YARP_HTTPD_MANAGERHTTPSERVER_H
+#define YARP_HTTPD_MANAGERHTTPSERVER_H
 
 #include <yarp/manager/server/HTTPServer.h>
 #include <string>
@@ -38,4 +38,4 @@ public:
 };
 
 
-#endif /* end of include guard: YARP_MANAGER_MANAGERHTTPSERVER_H */
+#endif /* end of include guard: YARP_HTTPD_MANAGERHTTPSERVER_H */

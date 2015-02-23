@@ -9,40 +9,6 @@ namespace yarp {
     namespace manager {
         namespace server {
 
-            std::string stringRepresentationForHTTPMethod(HTTPMethod method)
-            {
-                switch (method) {
-                    case HTTPMethodGet:
-                        return MHD_HTTP_METHOD_GET;
-                    case HTTPMethodHead:
-                        return MHD_HTTP_METHOD_HEAD;
-                    case HTTPMethodPost:
-                        return MHD_HTTP_METHOD_POST;
-                    case HTTPMethodPut:
-                        return MHD_HTTP_METHOD_PUT;
-                    case HTTPMethodDelete:
-                        return MHD_HTTP_METHOD_DELETE;
-                    default:
-                        return "";
-                }
-            }
-
-            HTTPMethod httpMethodFromString(std::string method)
-            {
-                if (method.compare(MHD_HTTP_METHOD_GET) == 0)
-                    return HTTPMethodGet;
-                if (method.compare(MHD_HTTP_METHOD_HEAD) == 0)
-                    return HTTPMethodHead;
-                if (method.compare(MHD_HTTP_METHOD_POST) == 0)
-                    return HTTPMethodPost;
-                if (method.compare(MHD_HTTP_METHOD_PUT) == 0)
-                    return HTTPMethodPut;
-                if (method.compare(MHD_HTTP_METHOD_DELETE) == 0)
-                    return HTTPMethodDelete;
-                return HTTPMethodNotDefined;
-            }
-
-
             struct HTTPServerImplementation {
 
                 typedef std::map<HTTPServerDispatchElementKey,
@@ -51,7 +17,8 @@ namespace yarp {
 
                 DispatchTableType dispatchTable;
 
-                HTTPServerSerializer *serializer;
+                typedef std::map<std::string, HTTPServerSerializer*> SerializerTable;
+                SerializerTable serializers; //key: content-type
 
                 MHD_Daemon *daemon;
 
@@ -185,14 +152,14 @@ namespace yarp {
             HTTPResponse::HTTPResponse() : returnCode(-1), content(NULL) {}
 
             HTTPServerImplementation::HTTPServerImplementation()
-            : serializer(NULL)
-            , daemon(NULL) {}
+            : daemon(NULL)
+            {
+                HTTPServerJSONSerializer *jsonSerializer = new HTTPServerJSONSerializer();
+                serializers.insert(SerializerTable::value_type(jsonSerializer->contentType(), jsonSerializer));
+            }
 
             HTTPServerImplementation::~HTTPServerImplementation() {
-                if (serializer) {
-                    delete serializer;
-                    serializer = NULL;
-                }
+
             }
 
             //HTTP C functions
@@ -228,7 +195,12 @@ namespace yarp {
 
                 std::string responseContent = "";
                 if (response.content) {
-                    responseContent = serverData->serializer->serialize(response.content);
+                    HTTPServerImplementation::SerializerTable::iterator serializer = serverData->serializers.find(response.responseContentType);
+                    if (serializer != serverData->serializers.end())
+                        responseContent = serializer->second->serialize(response.content);
+                    else {
+                        response.returnCode = MHD_HTTP_INTERNAL_SERVER_ERROR;
+                    }
                 }
                 MHD_Response *mhdResponse;
                 mhdResponse = MHD_create_response_from_buffer(responseContent.size(), (void*)responseContent.c_str(), MHD_RESPMEM_MUST_COPY);

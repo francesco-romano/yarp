@@ -20,6 +20,7 @@ namespace yarp {
             static HTTPResponse listApplications(void * context) {
                 ManagerHTTPServerContext* managerData = static_cast<ManagerHTTPServerContext*>(context);
                 HTTPResponse response;
+                response.responseContentType = HTTPMIMETypeJSON;
 
                 if (!managerData) { response.returnCode = MHD_NO; return response; }
                 const ApplicaitonPContainer& applications = managerData->manager->getKnowledgeBase()->getApplications();

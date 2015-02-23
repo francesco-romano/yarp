@@ -1,5 +1,5 @@
-#ifndef YARP_MANAGER_HTTPSERVERDISPATCHELEMENT_H
-#define YARP_MANAGER_HTTPSERVERDISPATCHELEMENT_H
+#ifndef YARP_HTTPD_HTTPSERVERDISPATCHELEMENT_H
+#define YARP_HTTPD_HTTPSERVERDISPATCHELEMENT_H
 
 #include <string>
 #include <yarp/manager/server/HTTPServer.h>
@@ -34,4 +34,4 @@ struct yarp::manager::server::HTTPServerDispatchElementValue {
 };
 
 
-#endif /* end of include guard: YARP_MANAGER_HTTPSERVERDISPATCHELEMENT_H */
+#endif /* end of include guard: YARP_HTTPD_HTTPSERVERDISPATCHELEMENT_H */

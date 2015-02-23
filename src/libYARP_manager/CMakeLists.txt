@@ -83,10 +83,12 @@ if(CREATE_LIB_MANAGER)
       add_definitions(-DYARP_MANAGER_HTTPD)
       
       set(YARP_manager_httpd_SRCS src/server/HTTPServer.cpp 
-                                  src/server/HTTPServerSerialization.cpp)
+                                  src/server/HTTPServerSerialization.cpp
+                                  src/server/Constants.cpp)
                                   
       set(YARP_manager_httpd_HDRS include/yarp/manager/server/HTTPServer.h 
-                                  include/yarp/manager/server/HTTPServerSerialization.h)
+                                  include/yarp/manager/server/HTTPServerSerialization.h
+                                  include/yarp/manager/server/Constants.h)
                                   
       set(YARP_manager_httpd_PRIVATE_HDRS include/yarp/manager/server/HTTPServerDispatchElement.h
                                           include/yarp/manager/server/ManagerHTTPServer.h)

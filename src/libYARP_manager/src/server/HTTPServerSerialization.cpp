@@ -1,4 +1,5 @@
 #include <yarp/manager/server/HTTPServerSerialization.h>
+#include <yarp/manager/server/Constants.h>
 #include <sstream>
 
 namespace yarp {
@@ -47,7 +48,7 @@ namespace yarp {
             }
             std::string HTTPServerJSONSerializer::contentType() const
             {
-                return "application/json";
+                return HTTPMIMETypeJSON;
             }
 
             //Concrete elements

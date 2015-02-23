@@ -1,5 +1,5 @@
-#ifndef YARP_MANAGER_HTTPSERVERSERIALIZATION_H
-#define YARP_MANAGER_HTTPSERVERSERIALIZATION_H
+#ifndef YARP_HTTPD_HTTPSERVERSERIALIZATION_H
+#define YARP_HTTPD_HTTPSERVERSERIALIZATION_H
 
 #include <string>
 #include <vector>
@@ -77,4 +77,4 @@ namespace yarp {
     }
 }
 
-#endif /* end of include guard: YARP_MANAGER_HTTPSERVERSERIALIZATION_H */
+#endif /* end of include guard: YARP_HTTPD_HTTPSERVERSERIALIZATION_H */

@@ -2,6 +2,7 @@
 #define YARP_MANAGER_MANAGERHTTPSERVER_H
 
 #include <yarp/manager/server/HTTPServer.h>
+#include <string>
 
 namespace yarp {
     namespace manager {
@@ -10,17 +11,20 @@ namespace yarp {
 
         namespace server {
             class ManagerHTTPServer;
+
+
+            //HTTP server for yarp manager
+            //Content-type: application/json
+            //It handles the following
+            //- (GET) Applications => return the list of applications (name)
+            //- (GET) Application/<app_name> => return the informations associated with the application <app_name>
+
+            extern std::string ManagerHTTPServerGetApplications;
+            extern std::string ManagerHTTPServerGetApplicationNamed;
+
         }
     }
 }
-
-//HTTP server for yarp manager
-//Content-type: application/json
-//It handles the following
-//- (GET) Applications => return the list of applications (name)
-//- (GET) Application/<app_name> => return the informations associated with the application <app_name>
-
-
 
 class yarp::manager::server::ManagerHTTPServer : public yarp::manager::server::HTTPServer
 {

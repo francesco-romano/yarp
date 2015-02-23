@@ -20,10 +20,13 @@ using namespace std;
 
 namespace yarp {
 namespace manager {
-    
+
 #ifdef YARP_MANAGER_HTTPD
-    class HTTPServer;
+    namespace server {
+        class HTTPServer;
+    }
 #endif
+
 
 /**
  * Class Manager
@@ -156,7 +159,7 @@ private:
     bool updateResource(GenericResource* resource);
     Broker* createBroker(Module* module);
 #ifdef YARP_MANAGER_HTTPD
-    HTTPServer *httpServer;
+    server::HTTPServer *httpServer;
 #endif
 };
 

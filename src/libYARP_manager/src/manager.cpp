@@ -90,7 +90,8 @@ void Manager::designatedInitializer(const char *szModPath, const char *szAppPath
 
 #ifdef YARP_MANAGER_HTTPD
     if (withHTTPDaemon) {
-
+        httpServer = new server::HTTPServer();
+        httpServer->startServer();
     }
 #endif
 }
@@ -104,6 +105,7 @@ Manager::~Manager()
 #ifdef YARP_MANAGER_HTTPD
     //tear down server
     if (httpServer) {
+        httpServer->stopServer();
         delete httpServer;
         httpServer = NULL;
     }

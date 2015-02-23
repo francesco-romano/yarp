@@ -9,6 +9,10 @@ namespace yarp {
     namespace manager {
         namespace server {
 
+            std::string ManagerHTTPServerGetApplications = "/Applications";
+            std::string ManagerHTTPServerGetApplicationNamed = "/Application/";
+
+
             struct ManagerHTTPServerContext {
                 yarp::manager::Manager *manager;
             };

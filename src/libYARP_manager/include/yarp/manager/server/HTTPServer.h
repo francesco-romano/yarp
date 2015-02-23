@@ -28,6 +28,10 @@ namespace yarp {
             extern std::string stringRepresentationForHTTPMethod(HTTPMethod method);
             extern HTTPMethod httpMethodFromString(std::string method);
 
+            typedef enum {
+                HTTPContentTypeUnknown = 0,
+                HTTPContentTypeJSON = 1
+            } HTTPContentType;
         }
     }
 }
@@ -40,16 +44,19 @@ private:
     HTTPServer(const HTTPServer&);
     HTTPServer& operator=(const HTTPServer&);
 
+    uint16_t m_serverPort;
+
     bool m_running;
     void * m_implementation;
 public:
     HTTPServer();
     ~HTTPServer();
-    
+
     bool startServer();
     bool stopServer();
     bool isRunning();
-    
+
+//    bool setContentType(HTTPContentType contentType);
     bool addRequestHandle(HTTPMethod method, std::string relativeURL, RequestHandler handler, void* context);
     bool removeRequestHandle(HTTPMethod method, std::string relativeURL);
     

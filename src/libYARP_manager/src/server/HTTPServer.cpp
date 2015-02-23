@@ -53,48 +53,12 @@ namespace yarp {
 
                 HTTPServerSerializer *serializer;
 
+                MHD_Daemon *daemon;
+
+                HTTPServerImplementation();
                 ~HTTPServerImplementation();
             };
-            /**
-             * A client has requested the given url using the given method
-             * (#MHD_HTTP_METHOD_GET, #MHD_HTTP_METHOD_PUT,
-             * #MHD_HTTP_METHOD_DELETE, #MHD_HTTP_METHOD_POST, etc).  The callback
-             * must call MHD callbacks to provide content to give back to the
-             * client and return an HTTP status code (i.e. #MHD_HTTP_OK,
-             * #MHD_HTTP_NOT_FOUND, etc.).
-             *
-             * @param cls argument given together with the function
-             *        pointer when the handler was registered with MHD
-             * @param connection the connection
-             * @param url the requested url
-             * @param method the HTTP method used (#MHD_HTTP_METHOD_GET,
-             *        #MHD_HTTP_METHOD_PUT, etc.)
-             * @param version the HTTP version string (i.e.
-             *        #MHD_HTTP_VERSION_1_1)
-             * @param upload_data the data being uploaded (excluding HEADERS,
-             *        for a POST that fits into memory and that is encoded
-             *        with a supported encoding, the POST data will NOT be
-             *        given in upload_data and is instead available as
-             *        part of #MHD_get_connection_values; very large POST
-             *        data *will* be made available incrementally in
-             *        @a upload_data)
-             * @param upload_data_size set initially to the size of the
-             *        @a upload_data provided; the method must update this
-             *        value to the number of bytes NOT processed;
-             * @param con_cls pointer that the callback can set to some
-             *        address and that will be preserved by MHD for future
-             *        calls for this request; since the access handler may
-             *        be called many times (i.e., for a PUT/POST operation
-             *        with plenty of upload data) this allows the application
-             *        to easily associate some request-specific state.
-             *        If necessary, this state can be cleaned up in the
-             *        global #MHD_RequestCompletedCallback (which
-             *        can be set with the #MHD_OPTION_NOTIFY_COMPLETED).
-             *        Initially, `*con_cls` will be NULL.
-             * @return #MHD_YES if the connection was handled successfully,
-             *         #MHD_NO if the socket must be closed due to a serios
-             *         error while handling the request
-             */
+
             static int
             handleHTTPRequest(void *cls,
                               struct MHD_Connection *connection,
@@ -114,7 +78,8 @@ namespace yarp {
             HTTPServer & HTTPServer::operator=(const HTTPServer &) {return *this;}
             HTTPServer::HTTPServer(const HTTPServer&) {}
 
-            HTTPServer::HTTPServer()
+            //FIXME: remove hardcoded port
+            HTTPServer::HTTPServer() : m_serverPort(9999)
             {
                 this->m_implementation = new HTTPServerImplementation();
             }
@@ -123,26 +88,71 @@ namespace yarp {
             {
                 HTTPServerImplementation *implementation = static_cast<HTTPServerImplementation*>(m_implementation);
                 if (implementation) {
-                    //                    delete (HTTPServerImplementation*)this->m_implementation;
                     delete implementation;
                     this->m_implementation = NULL;
                 }
             }
 
-
             bool HTTPServer::startServer()
             {
-                m_running = true;
-                return m_running;
+                HTTPServerImplementation *implementation = static_cast<HTTPServerImplementation*>(m_implementation);
+                if (!implementation) return false;
+
+                //Check if server is already running
+                if (implementation->daemon) return false;
+
+                implementation->daemon = MHD_start_daemon(MHD_USE_THREAD_PER_CONNECTION,
+                                                          m_serverPort,
+                                                          NULL, NULL,
+                                                          &handleHTTPRequest, implementation);
+
+                return implementation->daemon != NULL;
             }
 
             bool HTTPServer::stopServer()
             {
-                m_running = false;
-                return m_running;
+                HTTPServerImplementation *implementation = static_cast<HTTPServerImplementation*>(m_implementation);
+                if (!implementation) return false;
+
+                //server is not running
+                if (!implementation->daemon) return false;
+
+                MHD_stop_daemon(implementation->daemon);
+                implementation->daemon = NULL;
+
+                return true;
             }
 
-            bool HTTPServer::isRunning() { return m_running; }
+            bool HTTPServer::isRunning()
+            {
+                HTTPServerImplementation *implementation = static_cast<HTTPServerImplementation*>(m_implementation);
+                if (!implementation) return false;
+                return implementation->daemon != NULL;
+            }
+
+//            bool HTTPServer::setContentType(HTTPContentType contentType)
+//            {
+//                HTTPServerImplementation *implementation = static_cast<HTTPServerImplementation*>(m_implementation);
+//                if (!implementation) return false;
+//
+//                switch (contentType) {
+//                    case HTTPContentTypeJSON:
+//                        break;
+//                    default: return false; //content type not recognized
+//                }
+//
+//                if (implementation->serializer) {
+//                    delete implementation->serializer;
+//                }
+//
+//                switch (contentType) {
+//                    case HTTPContentTypeJSON:
+//                        implementation->serializer = new HTTPServerJSONSerializer();
+//                        break;
+//                    default: break;
+//                }
+//                return true;
+//            }
 
             bool HTTPServer::addRequestHandle(HTTPMethod method, std::string relativeURL, RequestHandler handler, void* context)
             {
@@ -172,7 +182,18 @@ namespace yarp {
                 return true;
             }
 
-            HTTPResponse::HTTPResponse() : returnCode(-1), content(0) {}
+            HTTPResponse::HTTPResponse() : returnCode(-1), content(NULL) {}
+
+            HTTPServerImplementation::HTTPServerImplementation()
+            : serializer(NULL)
+            , daemon(NULL) {}
+
+            HTTPServerImplementation::~HTTPServerImplementation() {
+                if (serializer) {
+                    delete serializer;
+                    serializer = NULL;
+                }
+            }
 
             //HTTP C functions
 
@@ -224,13 +245,6 @@ namespace yarp {
                 if (!header) return MHD_NO;
                 header->insert(std::pair<std::string, std::string>(key, value ? : ""));
                 return MHD_YES;
-            }
-
-            HTTPServerImplementation::~HTTPServerImplementation() {
-                if (serializer) {
-                    delete serializer;
-                    serializer = NULL;
-                }
             }
             
         }

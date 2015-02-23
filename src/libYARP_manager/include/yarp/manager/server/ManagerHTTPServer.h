@@ -33,6 +33,7 @@ private:
     void * m_private;
 public:
     ManagerHTTPServer(const yarp::manager::Manager& manager);
+    virtual ~ManagerHTTPServer();
 
     bool initRequestHandlers();
 };

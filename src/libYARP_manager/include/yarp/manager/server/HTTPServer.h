@@ -29,15 +29,15 @@ private:
     void * m_implementation;
 public:
     HTTPServer();
-    ~HTTPServer();
+    virtual ~HTTPServer();
 
-    bool startServer();
-    bool stopServer();
-    bool isRunning();
+    virtual bool startServer();
+    virtual bool stopServer();
+    virtual bool isRunning();
 
 //    bool setContentType(HTTPContentType contentType);
-    bool addRequestHandle(HTTPMethod method, std::string relativeURL, RequestHandler handler, void* context);
-    bool removeRequestHandle(HTTPMethod method, std::string relativeURL);
+    virtual bool addRequestHandle(HTTPMethod method, std::string relativeURL, RequestHandler handler, void* context);
+    virtual bool removeRequestHandle(HTTPMethod method, std::string relativeURL);
     
 };
 
@@ -46,7 +46,7 @@ public:
     HTTPResponse();
 
     int returnCode;
-    HTTPServerSerializable *content;
+    HTTPServerSerializable *content; //this is a risk for leak. copy it or explicitly make assumptions on the memory model
     std::string responseContentType;
 };
 

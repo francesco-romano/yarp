@@ -54,6 +54,7 @@ namespace yarp {
 
             HTTPServer::~HTTPServer()
             {
+                stopServer();
                 HTTPServerImplementation *implementation = static_cast<HTTPServerImplementation*>(m_implementation);
                 if (implementation) {
                     delete implementation;

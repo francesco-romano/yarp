@@ -20,11 +20,13 @@ namespace yarp {
             static HTTPResponse listApplications(void * context, std::map<std::string, std::string> headerParameters) {
                 ManagerHTTPServerContext* managerData = static_cast<ManagerHTTPServerContext*>(context);
                 HTTPResponse response;
-                response.responseContentType = HTTPMIMETypeJSON;
 
                 if (!managerData) { response.returnCode = MHD_NO; return response; }
+                response.responseContentType = HTTPMIMETypeJSON;
+                
                 const ApplicaitonPContainer& applications = managerData->manager->getKnowledgeBase()->getApplications();
 
+                std::cerr << "Retrieved " << applications.size() << " applications\n";
                 HTTPServerSerializableArray applicationNames;
                 applicationNames.reserve(applications.size());
 
@@ -43,6 +45,14 @@ namespace yarp {
                 context->manager = const_cast<yarp::manager::Manager*>(&m_manager);
                 m_private = context;
                 initRequestHandlers();
+            }
+
+            ManagerHTTPServer::~ManagerHTTPServer()
+            {
+                if (m_private) {
+                    delete (ManagerHTTPServerContext*)m_private;
+                }
+
             }
 
             bool ManagerHTTPServer::initRequestHandlers()

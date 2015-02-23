@@ -4,6 +4,7 @@
 #include <yarp/manager/server/HTTPServerDispatchElement.h>
 #include <microhttpd.h>
 #include <map>
+#include <iostream>
 
 namespace yarp {
     namespace manager {
@@ -68,11 +69,12 @@ namespace yarp {
                 //Check if server is already running
                 if (implementation->daemon) return false;
 
-                implementation->daemon = MHD_start_daemon(MHD_USE_THREAD_PER_CONNECTION,
+                implementation->daemon = MHD_start_daemon(MHD_USE_THREAD_PER_CONNECTION|MHD_USE_DEBUG,
                                                           m_serverPort,
                                                           NULL, NULL,
-                                                          &handleHTTPRequest, implementation);
+                                                          &handleHTTPRequest, implementation, MHD_OPTION_END);
 
+                std::cerr << "Server is " << (implementation->daemon ? "successfully" : "not") << " running\n";
                 return implementation->daemon != NULL;
             }
 
@@ -190,7 +192,7 @@ namespace yarp {
                     //Parse parameters
                     std::map<std::string, std::string> header;
                     MHD_get_connection_values(connection, MHD_HEADER_KIND, &parseHeaderRequest, &header);
-                    response = found->second.processRequest(); //pass parameters here
+                    response = found->second.processRequest(header); //pass parameters here
                 }
 
                 std::string responseContent = "";
@@ -216,6 +218,8 @@ namespace yarp {
                 std::map<std::string, std::string> *header = static_cast<std::map<std::string, std::string>*>(cls);
                 if (!header) return MHD_NO;
                 header->insert(std::pair<std::string, std::string>(key, value ? : ""));
+                std::cout << "HEADER: " << key << "->" << value << "\n";
+
                 return MHD_YES;
             }
             

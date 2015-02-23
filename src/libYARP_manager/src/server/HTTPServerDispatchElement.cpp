@@ -23,7 +23,7 @@ namespace yarp {
             }
 
 
-            HTTPResponse HTTPServerDispatchElementValue::processRequest() const
+            HTTPResponse HTTPServerDispatchElementValue::processRequest(std::map<std::string, std::string> headerParameters) const
             {
                 HTTPResponse response;
                 if (this->requestHandler) {

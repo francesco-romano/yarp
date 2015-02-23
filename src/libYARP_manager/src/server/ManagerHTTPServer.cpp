@@ -42,6 +42,7 @@ namespace yarp {
                 ManagerHTTPServerContext* context = new ManagerHTTPServerContext();
                 context->manager = const_cast<yarp::manager::Manager*>(&m_manager);
                 m_private = context;
+                initRequestHandlers();
             }
 
             bool ManagerHTTPServer::initRequestHandlers()

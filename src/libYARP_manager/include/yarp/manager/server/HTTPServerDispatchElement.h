@@ -2,6 +2,7 @@
 #define YARP_HTTPD_HTTPSERVERDISPATCHELEMENT_H
 
 #include <string>
+#include <map>
 #include <yarp/manager/server/HTTPServer.h>
 
 namespace yarp {
@@ -28,7 +29,7 @@ struct yarp::manager::server::HTTPServerDispatchElementKey
 
 
 struct yarp::manager::server::HTTPServerDispatchElementValue {
-    HTTPResponse processRequest() const;
+    HTTPResponse processRequest(std::map<std::string, std::string> headerParameters) const;
     HTTPServer::RequestHandler requestHandler;
     void * context;
 };

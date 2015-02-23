@@ -19,7 +19,7 @@
 #include <yarp/manager/singleapploader.h>
 
 #ifdef YARP_MANAGER_HTTPD
-#include <yarp/manager/server/HTTPServer.h>
+#include <yarp/manager/server/ManagerHTTPServer.h>
 #endif
 
 #define RUN_TIMEOUT             10      // Run timeout in seconds
@@ -41,13 +41,14 @@ using namespace yarp::manager;
 
 Manager::Manager(bool withWatchDog) : MEvent()
 {
-    logger  = ErrorLogger::Instance();
-    bWithWatchDog = withWatchDog;
-    bAutoDependancy = false;
-    bRestricted = false;
-    strDefBroker = BROKER_YARPRUN;
-    knowledge.createFrom(NULL, NULL, NULL);
-    connector.init();
+    designatedInitializer("", "", "", false, false);
+//    logger  = ErrorLogger::Instance();
+//    bWithWatchDog = withWatchDog;
+//    bAutoDependancy = false;
+//    bRestricted = false;
+//    strDefBroker = BROKER_YARPRUN;
+//    knowledge.createFrom(NULL, NULL, NULL);
+//    connector.init();
 }
 
 Manager::Manager(const char* szModPath, const char* szAppPath,
@@ -89,10 +90,10 @@ void Manager::designatedInitializer(const char *szModPath, const char *szAppPath
     connector.init();
 
 #ifdef YARP_MANAGER_HTTPD
-    if (withHTTPDaemon) {
-        httpServer = new server::HTTPServer();
+//    if (withHTTPDaemon) {
+        httpServer = new server::ManagerHTTPServer(*this);
         httpServer->startServer();
-    }
+//    }
 #endif
 }
 

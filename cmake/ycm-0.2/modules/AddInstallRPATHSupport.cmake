@@ -80,25 +80,33 @@
 
 
 include(CMakeParseArguments)
+include(GNUInstallDirs)
 
 
 function(ADD_INSTALL_RPATH_SUPPORT)
 
-  # If RPATH is disabled in CMake, it is useless to proceed.
-  if(CMAKE_SKIP_RPATH OR (CMAKE_SKIP_INSTALL_RPATH AND CMAKE_SKIP_BUILD_RPATH))
-    return()
-  endif()
-
   set(_options USE_LINK_PATH)
-  set(_oneValueArgs )
+  set(_oneValueArgs INSTALL_NAME_DIR)
   set(_multiValueArgs BIN_DIRS
-                      LIB_DIRS
-                      DEPENDS)
+    LIB_DIRS
+  DEPENDS)
 
   cmake_parse_arguments(_ARS "${_options}"
                              "${_oneValueArgs}"
                              "${_multiValueArgs}"
                              "${ARGN}")
+
+  if(APPLE AND (CMAKE_SKIP_RPATH OR CMAKE_SKIP_INSTALL_RPATH))
+    set(CMAKE_INSTALL_NAME_DIR "${_ARS_INSTALL_NAME_DIR}" PARENT_SCOPE)
+    set(CMAKE_SKIP_RPATH FALSE PARENT_SCOPE)
+    set(CMAKE_SKIP_INSTALL_RPATH FALSE PARENT_SCOPE)
+    return()
+  endif()
+
+  # If RPATH is disabled in CMake, it is useless to proceed.
+  if(CMAKE_SKIP_RPATH OR (CMAKE_SKIP_INSTALL_RPATH AND CMAKE_SKIP_BUILD_RPATH))
+    return()
+  endif()
 
   set(_rpath_available 1)
   if(DEFINED _ARS_DEPENDS)

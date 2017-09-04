@@ -69,6 +69,10 @@ public:
 
     virtual ~PortWriterBufferBase();
 
+    PortWriterBufferBase(PortWriterBufferBase&& other);
+
+    PortWriterBufferBase& operator=(PortWriterBufferBase&& other);
+
     virtual PortWriterWrapper *create(PortWriterBufferManager& man,
                                       void *tracker) = 0;
 

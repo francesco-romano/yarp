@@ -27,6 +27,39 @@ yarp::os::PortReaderBuffer<T>::~PortReaderBuffer()
 }
 
 template <typename T>
+yarp::os::PortReaderBuffer<T>::PortReaderBuffer(PortReaderBuffer<T>&& other)
+: implementation(std::move(other.implementation))
+, autoDiscard(other.autoDiscard)
+, last(other.last)
+, default_value(other.default_value)
+, reader(other.reader)
+{
+    other.autoDiscard = true;
+    other.last = nullptr;
+    other.default_value = nullptr;
+    other.reader = nullptr;
+}
+
+
+template <typename T>
+yarp::os::PortReaderBuffer<T>& yarp::os::PortReaderBuffer<T>::operator=(PortReaderBuffer<T>&& other)
+{
+    if (this == &other) return *this;
+    implementation = std::move(other.implementation);
+    autoDiscard = other.autoDiscard;
+    last = other.last;
+    default_value = other.default_value;
+    reader = other.reader;
+
+    other.autoDiscard = true;
+    other.last = nullptr;
+    other.default_value = nullptr;
+    other.reader = nullptr;
+
+    return *this;
+}
+
+template <typename T>
 void yarp::os::PortReaderBuffer<T>::detach()
 {
     // it would also help to close the port, so

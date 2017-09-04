@@ -59,6 +59,27 @@ Port::~Port()
     }
 }
 
+Port::Port(Port&& other)
+: UnbufferedContactable(other)
+, implementation(other.implementation)
+, owned(other.owned)
+{
+    other.implementation = nullptr;
+    owned = false;
+}
+
+Port& Port::operator=(Port&& other)
+{
+    if (this == &other) return *this;
+    // Move the data from other to this
+    implementation = other.implementation;
+    owned = other.owned;
+    //Now reset other to be empty
+    other.implementation = nullptr;
+    owned = false;
+    return *this;
+}
+
 bool Port::sharedOpen(Port& port)
 {
     close();

@@ -33,6 +33,31 @@ yarp::os::BufferedPort<T>::~BufferedPort()
     close();
 }
 
+//template <typename T>
+//yarp::os::BufferedPort<T>::BufferedPort(yarp::os::BufferedPort<T>&& other)
+//: writer(std::move(other.writer))
+//, port(std::move(other.port))
+//, reader(std::move(other.reader))
+//, interrupted(other.interrupted)
+//, attached(other.attached)
+//{
+//
+//}
+//
+//template <typename T>
+//yarp::os::BufferedPort<T>& yarp::os::BufferedPort<T>::operator=(yarp::os::BufferedPort<T>&& other)
+//{
+//    if (&this == other) {
+//        return *this;
+//    }
+//    this->writer = std::move(other.writer);
+//    this->port = std::move(other.port);
+//    this->reader = std::move(other.reader);
+//    this->interrupted = other.interrupted;
+//    this->attached = other.attached;
+//    return *this;
+//}
+
 template <typename T>
 bool yarp::os::BufferedPort<T>::open(const ConstString& name)
 {

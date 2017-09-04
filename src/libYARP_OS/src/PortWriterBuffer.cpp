@@ -185,6 +185,19 @@ PortWriterBufferBase::~PortWriterBufferBase() {
     }
 }
 
+PortWriterBufferBase::PortWriterBufferBase(PortWriterBufferBase&& other)
+: implementation(other.implementation)
+{
+    other.implementation = nullptr;
+}
+
+PortWriterBufferBase& PortWriterBufferBase::operator=(PortWriterBufferBase&& other)
+{
+    if (this == &other) return *this;
+    implementation = other.implementation;
+    other.implementation = nullptr;
+    return *this;
+}
 
 void *PortWriterBufferBase::getContent() {
     return HELPER(implementation).get();

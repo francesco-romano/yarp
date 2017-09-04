@@ -65,6 +65,10 @@ public:
      */
     virtual ~Port();
 
+    Port(Port&& other);
+
+    Port& operator=(Port&& other);
+
     // Documented in Contactable
     bool open(const ConstString& name) override;
 

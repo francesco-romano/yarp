@@ -26,6 +26,10 @@ public:
     PortReaderBufferBase(unsigned int maxBuffer);
     virtual ~PortReaderBufferBase();
 
+    PortReaderBufferBase(PortReaderBufferBase&& other);
+
+    PortReaderBufferBase& operator=(PortReaderBufferBase&& other);
+
     void setCreator(PortReaderBufferBaseCreator* creator);
 
     void setReplier(yarp::os::PortReader& reader);

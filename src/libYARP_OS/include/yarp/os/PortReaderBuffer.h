@@ -56,6 +56,10 @@ public:
      */
     virtual ~PortReaderBuffer();
 
+    PortReaderBuffer(PortReaderBuffer&& other);
+
+    PortReaderBuffer& operator=(PortReaderBuffer&& other);
+
     void detach();
 
     // documented in TypedReader

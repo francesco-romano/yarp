@@ -170,15 +170,54 @@ public:
         }
     }
 
+    void checkMoveConstructor() {
+        report(0, "checking move constructor...");
+        
+//        BufferedPort<Bottle> out;
+//        out.open("/out");
+//
+//        BufferedPort<Bottle> moved(std::move(out));
+//        checkTrue(!moved.isClosed(), "Moved port is open");
+////        checkTrue(out.isClosed(), "Original port is closed");
+//
+//        moved.close();
+
+        BufferedPort<Bottle> p1, p2;
+        p1.open("/p1");
+        p2.open("/p2");
+
+        Network::connect("/p1","/p2","local");
+        Network::sync("/p1");
+        Network::sync("/p2");
+
+        BufferedPort<Bottle> m1(std::move(p1));
+        BufferedPort<Bottle> m2(std::move(p2));
+
+        Bottle& data2 = m1.prepare();
+        data2.fromString("hello2");
+        checkEqual(data2.toString().c_str(),"hello2","value ok");
+        m1.write();
+
+        Bottle *bot = m2.read();
+        checkTrue(bot, "Port message received");
+        if (bot) {
+            checkEqual(bot->toString().c_str(),"hello2","value ok");
+        }
+
+
+
+    }
+
     virtual void runTests() override {
         Network::setLocalMode(true);
 
         //checkLocal(); // still rather experimental
         // in fact too experimental, omit from general builds
 
-        checkAccept();
-        checkCallback();
-        checkCallbackNoOpen();
+//        checkAccept();
+//        checkCallback();
+//        checkCallbackNoOpen();
+        checkMoveConstructor();
         Network::setLocalMode(false);
     }
 };

@@ -327,6 +327,55 @@ PortReaderBufferBase::~PortReaderBufferBase() {
     }
 }
 
+PortReaderBufferBase::PortReaderBufferBase(PortReaderBufferBase&& other)
+: creator(other.creator)
+, maxBuffer(other.maxBuffer)
+, prune(other.prune)
+, allowReuse(other.allowReuse)
+, implementation(other.implementation)
+, replier(other.replier)
+, period(other.period)
+, last_recv(other.last_recv)
+{
+    other.creator = nullptr;
+    other.maxBuffer = 0;
+    other.prune = false;
+    other.allowReuse = true;
+    other.implementation = nullptr;
+    other.replier = nullptr;
+    other.period = -1;
+    other.last_recv = -1;
+
+    // unfortunately not all methods check implementation != nullptr
+    other.init();
+}
+
+PortReaderBufferBase& PortReaderBufferBase::operator=(PortReaderBufferBase&& other)
+{
+    if (this == &other) return *this;
+    creator = other.creator;
+    maxBuffer =  other.maxBuffer;
+    prune = other.prune;
+    allowReuse = other.allowReuse;
+    implementation = other.implementation;
+    replier = other.replier;
+    period = other.period;
+    last_recv = other.last_recv;
+
+    other.creator = nullptr;
+    other.maxBuffer = 0;
+    other.prune = false;
+    other.allowReuse = true;
+    other.implementation = nullptr;
+    other.replier = nullptr;
+    other.period = -1;
+    other.last_recv = -1;
+
+    // unfortunately not all methods check implementation != nullptr
+    other.init();
+    return *this;
+}
+
 void PortReaderBufferBase::init() {
     implementation = new PortReaderBufferBaseHelper(*this);
     yAssert(implementation!=nullptr);

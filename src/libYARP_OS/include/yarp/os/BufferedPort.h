@@ -88,6 +88,16 @@ public:
     BufferedPort(Port& port);
 
     /**
+     * Move constructor
+     */
+    BufferedPort(BufferedPort<T>&& other) = default;
+
+    /**
+     * Move assignment operator
+     */
+    BufferedPort<T>& operator=(BufferedPort<T>&& other) = default;
+
+    /**
      * Destructor.
      */
     virtual ~BufferedPort();
